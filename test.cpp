@@ -78,28 +78,25 @@ public:
 
     void simulatePond()
     {
-        while(fishes.size() >= 1)
+        for(auto& currentFish : fishes)
         {
-            for(auto& currentFish : fishes)
+            for(auto& otherFish : fishes)
             {
-                for(auto& otherFish : fishes)
+                if(currentFish->getSize() > otherFish->getSize())
                 {
-                    if(currentFish->getSize() > otherFish->getSize())
-                    {
-                        currentFish->eat(*otherFish);
-                    }
-                    else
-                    {
-                        otherFish->eat(*currentFish);
-                        break;
-                    }
+                    currentFish->eat(*otherFish);
                 }
-                currentFish->weaken();
+                else
+                {
+                    otherFish->eat(*currentFish);
+                    break;
+                }
             }
-            printFishState();
-            cout << "end loop" << endl;
-            removeDeadFish();
+            currentFish->weaken();
         }
+        printFishState();
+        cout << "end loop" << endl;
+        removeDeadFish();
     }
 
     void printFishState()
