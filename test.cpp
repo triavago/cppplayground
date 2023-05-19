@@ -41,8 +41,7 @@ public:
 
     void weaken()
     {
-        size -= 1;
-        cout << "Fish size: " << size <<endl;
+        size = size - size/10;
     }
 private:
     int size;
@@ -56,6 +55,8 @@ public:
     {
         cout << "This is a stone" << endl;
     }
+
+    void createRock() {}
 };
 
 class Mussels
@@ -65,6 +66,8 @@ public:
     {
         cout << "This is mussels" << endl;
     }
+
+    void createMussels() {}
 };
 
 class Pond
@@ -73,18 +76,25 @@ public:
     Pond(int fishNums)
     {
         fishes.reserve(fishNums);
-        createFish(fishNums);    
+        createFish(fishNums);
+        pondRock.createRock();
+        pondMussels.createMussels();
     }
 
     void simulatePond()
     {
         for(auto& currentFish : fishes)
         {
+            if(!currentFish->isAlive())
+                continue;
             for(auto& otherFish : fishes)
             {
+                if(otherFish == currentFish || !otherFish->isAlive())
+                    continue;
                 if(currentFish->getSize() > otherFish->getSize())
                 {
                     currentFish->eat(*otherFish);
+                    break;
                 }
                 else
                 {
@@ -95,7 +105,6 @@ public:
             currentFish->weaken();
         }
         printFishState();
-        cout << "end loop" << endl;
         removeDeadFish();
     }
 
@@ -113,6 +122,8 @@ public:
     }
 private:
     vector<unique_ptr<Fish>> fishes;
+    Stone pondRock;
+    Mussels pondMussels;
 
     void createFish(int numFish)
     {
@@ -123,6 +134,7 @@ private:
         for (int i = 0; i < numFish; i++) 
         {
             int size = dis(gen);
+            cout << "Fish size: " << size <<endl;
             fishes.push_back(make_unique<Fish>(size));
         }
     }
